@@ -6,6 +6,8 @@ import numpy
 import pandas
 from sklearn.linear_model import LinearRegression
 
+from sklearn.metrics import mean_squared_error
+
 
 # %%
 csv_file = "./TESLA_STOCK_2010_2020.csv"
@@ -16,14 +18,13 @@ df.info()
 
 
 # %%
-df['Date'] = pandas.to_datetime(df['Date'])
-df.set_index('Date', inplace=True, verify_integrity=True)
-df.info()
+# view dataframe
+df
 
 
 # %%
-# view dataframe
-df
+df['Date'] = pandas.to_datetime(df['Date'])
+df.set_index('Date', inplace=True, verify_integrity=True)
 
 
 # %%
@@ -38,6 +39,10 @@ df.drop('Adj Close', axis=1, inplace=True)
 
 # %%
 df.info()
+
+
+# %%
+df
 
 
 # %%
@@ -130,7 +135,25 @@ df.drop('NO', axis=1, inplace=True)
 
 # %%
 df.plot(y=['Open', 'Open_Predict', 'Loss'], figsize=(50,15))
-df.iloc[-200:].plot(y=['Open', 'Open_Predict', 'Loss'], figsize=(50,15))
+# df.iloc[-200:].plot(y=['Open', 'Open_Predict', 'Loss'], figsize=(50,15))
+
+
+# %%
+evaluate_df = df[{'Open', 'Open_Predict', 'Loss'}].dropna()
+evaluate_df.plot(y='Loss', figsize=(50,15))
+evaluate_df.plot(y='Loss', kind='hist')
+
+
+# %%
+#cal mean squared error
+mse = mean_squared_error(y_true=evaluate_df['Open'], y_pred=evaluate_df['Open_Predict'])
+# show resluts
+print('Mean Squared Error:          ', mse)
+print('Root Mean Squared Error:     ', numpy.sqrt(mse))
+
+
+# %%
+evaluate_df['Loss'].describe()
 
 
 # %%
